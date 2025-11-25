@@ -30,6 +30,11 @@ This repository is divided into modules based on the type of vulnerability:
 * **Target:** JavaScript Runtime (Object Prototype)
 * **Goal:** Corrupt the global Object prototype to alter application logic (e.g., gain Admin access).
 
+### 5. [XSS (Base64 Reflected)](./src/xss-base64/README.md)
+* **Location:** `./src/xss-base64`
+* **Target:** Browser DOM (innerHTML)
+* **Goal:** Bypass text filters by encoding malicious scripts in Base64, then executing them upon decoding.
+
 ## 🌍 Global Prerequisites
 
 Before running any module, ensure you have:

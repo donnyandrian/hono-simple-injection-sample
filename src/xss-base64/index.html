@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Base64 Decoder (XSS Demo)</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				background-color: #333;
+				color: #fff;
+				padding: 20px;
+				display: flex;
+				justify-content: center;
+			}
+			.container {
+				background: #444;
+				padding: 30px;
+				border-radius: 8px;
+				width: 600px;
+				box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+			}
+			h1 {
+				margin-top: 0;
+				color: #61dafb;
+			}
+			textarea {
+				width: 100%;
+				height: 100px;
+				margin-bottom: 10px;
+				background: #222;
+				border: 1px solid #555;
+				color: #ddd;
+				padding: 10px;
+				border-radius: 4px;
+			}
+			.btn-group {
+				display: flex;
+				gap: 10px;
+				margin-bottom: 20px;
+			}
+			button {
+				flex: 1;
+				padding: 10px;
+				cursor: pointer;
+				border: none;
+				font-weight: bold;
+				color: white;
+				border-radius: 4px;
+			}
+			.btn-vuln {
+				background: #e74c3c;
+			}
+			.btn-safe {
+				background: #27ae60;
+			}
+			.label {
+				font-size: 0.9em;
+				color: #bbb;
+				margin-bottom: 5px;
+				display: block;
+			}
+			#result-area {
+				background: #222;
+				padding: 15px;
+				border: 1px dashed #666;
+				min-height: 50px;
+				margin-top: 10px;
+				overflow: hidden;
+			}
+
+			.code-block {
+				background: #111;
+				padding: 10px;
+				font-family: monospace;
+				font-size: 0.8em;
+				color: #f1c40f;
+				word-break: break-all;
+				cursor: pointer;
+				border: 1px solid #555;
+			}
+			.code-block:hover {
+				background: #000;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Base64 Decoder</h1>
+
+			<label class="label">Input Base64 String:</label>
+			<textarea id="input64" placeholder="Paste Base64 here..."></textarea>
+
+			<div class="btn-group">
+				<button class="btn-vuln" onclick="decode('unsafe')">🔓 Decrypt (Unsafe)</button>
+				<button class="btn-safe" onclick="decode('safe')">🔒 Decrypt (Safe)</button>
+			</div>
+
+			<label class="label">Decoded Result (Rendered HTML):</label>
+			<!-- The vulnerability happens here in this DIV -->
+			<div id="result-area">Waiting for input...</div>
+
+			<hr style="border-color: #555; margin: 20px 0" />
+
+			<h3>😈 Attack Payload</h3>
+			<p style="font-size: 0.9em; color: #bbb">
+				Click the box below to copy a malicious Base64 string. It contains a hidden image
+				tag that executes <code>console.log("hacked")</code>.
+			</p>
+
+			<!-- 
+            Payload: <img src=x onerror="console.log('hacked'); document.getElementById('result-area').innerHTML='NOTHING HEHE :)';"> 
+            Base64: PGltZyBzcmM9eCBvbmVycm9yPSJjb25zb2xlLmxvZygnaGFja2VkJyk7IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQtYXJlYScpLmlubmVySFRNTD0nTk9USElORyBIRUhFIDopJzsiPg==
+        -->
+			<div class="code-block" onclick="copyPayload()">
+				PGltZyBzcmM9eCBvbmVycm9yPSJjb25zb2xlLmxvZygnaGFja2VkJyk7IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQtYXJlYScpLmlubmVySFRNTD0nTk9USElORyBIRUhFIDopJzsiPg==
+			</div>
+			<p id="copy-msg" style="color: #27ae60; font-size: 0.8em; display: none">
+				Copied to clipboard!
+			</p>
+		</div>
+
+		<script>
+			async function decode(mode) {
+				const input = document.getElementById("input64").value;
+				const resultDiv = document.getElementById("result-area");
+
+				resultDiv.innerHTML = "Processing...";
+
+				try {
+					const res = await fetch(
+						`http://localhost:3004/decode?mode=${mode}&data=${encodeURIComponent(
+							input
+						)}`
+					);
+					const data = await res.json();
+
+					if (res.ok) {
+						// [THE VULNERABLE LOGIC]
+						// We set innerHTML to support "Rich Text" decoding.
+						// If the backend didn't sanitize, any script tags or handlers here will execute.
+						resultDiv.innerHTML = data.content;
+
+						// We try to alert the content to the user
+						// If the attack succeeds, the malicious script might run BEFORE this alert,
+						// or modify the DOM so this alert looks weird.
+						setTimeout(() => {
+							// Simple delay to allow DOM to render
+							if (resultDiv.innerText)
+								alert("Decrypted Content:\n" + resultDiv.innerText);
+						}, 100);
+					} else {
+						resultDiv.innerText = "Error: " + data.error;
+					}
+				} catch (err) {
+					resultDiv.innerText = "Fetch Error";
+				}
+			}
+
+			function copyPayload() {
+				const code = document.querySelector(".code-block").innerText;
+				navigator.clipboard.writeText(code);
+				const msg = document.getElementById("copy-msg");
+				msg.style.display = "block";
+				setTimeout(() => (msg.style.display = "none"), 2000);
+			}
+		</script>
+	</body>
+</html>
