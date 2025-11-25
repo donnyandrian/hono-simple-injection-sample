@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Ping Service (Shell Injection Demo)</title>
+		<style>
+			body {
+				font-family: monospace;
+				background-color: #1e1e1e;
+				color: #0f0;
+				padding: 20px;
+			}
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+			}
+			input {
+				padding: 10px;
+				width: 70%;
+				background: #333;
+				border: 1px solid #555;
+				color: white;
+			}
+			button {
+				padding: 10px 20px;
+				cursor: pointer;
+				background: #007acc;
+				border: none;
+				color: white;
+				font-weight: bold;
+			}
+			button:hover {
+				background: #005f9e;
+			}
+			pre {
+				background-color: #000;
+				border: 1px solid #333;
+				padding: 15px;
+				overflow-x: auto;
+				white-space: pre-wrap;
+			}
+			.vulnerable {
+				border-left: 5px solid red;
+			}
+			.safe {
+				border-left: 5px solid green;
+			}
+			h1 {
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Windows Ping Utility</h1>
+
+			<div class="vulnerable">
+				<h3>🔴 Vulnerable Ping</h3>
+				<p>Enter IP Address:</p>
+				<input type="text" id="vulnInput" placeholder="127.0.0.1" value="127.0.0.1" />
+				<button onclick="ping('ping')">Ping</button>
+			</div>
+
+			<br />
+
+			<div class="safe">
+				<h3>🟢 Secure Ping</h3>
+				<p>Enter IP Address:</p>
+				<input type="text" id="safeInput" placeholder="127.0.0.1" value="127.0.0.1" />
+				<button onclick="ping('ping-safe')">Ping</button>
+			</div>
+
+			<h3>Terminal Output:</h3>
+			<pre id="output">Waiting for command...</pre>
+		</div>
+
+		<script>
+			async function ping(endpoint) {
+				const outputDiv = document.getElementById("output");
+				const inputId = endpoint === "ping" ? "vulnInput" : "safeInput";
+				const ip = document.getElementById(inputId).value;
+
+				outputDiv.textContent = `> Sending request to /${endpoint}...\n> Please wait...`;
+
+				try {
+					// Fetch to port 3001
+					const res = await fetch(
+						`http://localhost:3001/${endpoint}?ip=${encodeURIComponent(ip)}`
+					);
+					const data = await res.json();
+
+					if (res.ok) {
+						outputDiv.textContent = data.output || data.error;
+					} else {
+						outputDiv.textContent = `[ERROR] ${data.message || data.error}`;
+					}
+				} catch (err) {
+					outputDiv.textContent = `[System Error] ${err.message}`;
+				}
+			}
+		</script>
+	</body>
+</html>
