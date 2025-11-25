@@ -5,19 +5,7 @@ This module demonstrates a **Command Injection** vulnerability targeting the **W
 * **Vulnerability:** OS Command Injection
 * **Target OS:** Windows (uses `cmd.exe` syntax)
 * **Technique:** Chaining commands using the `&` operator.
-
----
-
-## 💻 Setup & Run
-
-1.  **Run the Server:**
-    ```bash
-    bun run index.ts
-    ```
-    The server will start on **http://localhost:3001**.
-
-2.  **Open the Frontend:**
-    Open `shell/index.html` in your web browser.
+* **Port:** 3001
 
 ---
 

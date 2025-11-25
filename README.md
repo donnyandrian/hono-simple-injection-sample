@@ -9,16 +9,21 @@ This project is a collection of educational demonstrations illustrating common s
 This repository is divided into modules based on the type of vulnerability:
 
 ### 1. [SQL Injection (SQLi)](./src/sqli/README.md)
-* **Location:** `/sqli`
+* **Location:** `./src/sqli`
 * **Target:** PostgreSQL Database
 * **Scenario:** A user search feature.
 * **Goal:** Demonstrate how attackers can manipulate database queries to steal data.
 
 ### 2. [Shell Injection (Command Injection)](./src/shell/README.md)
-* **Location:** `/shell`
+* **Location:** `./src/shell`
 * **Target:** Windows OS (cmd.exe)
 * **Scenario:** A "Ping Service" that executes system commands.
 * **Goal:** Demonstrate how attackers can chain commands to execute arbitrary code on the host OS.
+
+### 3. [Server-Side Template Injection (SSTI)](./src/ssti/README.md)
+* **Location:** `./src/ssti`
+* **Target:** EJS Template Engine
+* **Goal:** Inject malicious code into server-side templates to execute logic or commands.
 
 ## 🌍 Global Prerequisites
 
@@ -29,20 +34,22 @@ Before running any module, ensure you have:
 
 ## 🚀 How to Run
 
-1.  **Install Dependencies:**
+The process is the same for every module. Open your terminal in the project root:
+
+1.  **Install Dependencies** (Required for each folder):
     ```bash
     bun install
     ```
-2.  **Navigate to the specific folder and follow the `README.md` inside that folder.**
 
-    - **For SQL Injection:**
-        ```bash
-        cd ./src/sqli
-        # Follow instructions in sqli/README.md
-        ```
+2.  **Navigate** to the specific vulnerability folder:
+    ```bash
+    cd ./src/sqli  # or 'cd ./src/shell', or 'cd ./src/ssti'
+    ```
 
-    - **For Shell Injection:**
-        ```bash
-        cd ./src/shell
-        # Follow instructions in shell/README.md
-        ```
+3.  **Run the Server:**
+    ```bash
+    bun run index.ts
+    ```
+
+4.  **View the Demo:**
+    Open the `index.html` file located inside that folder in your web browser.

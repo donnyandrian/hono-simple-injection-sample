@@ -5,60 +5,51 @@ This module demonstrates a **SQL Injection** vulnerability targeting a **Postgre
 * **Vulnerability:** SQL Injection (String Concatenation)
 * **Target:** PostgreSQL
 * **Technique:** Boolean-based injection / Tautology (`OR 1=1`)
+* **Port:** 3000
 
 ---
 
-## 💻 Setup & Run
+## ⚙️ Configuration (Database)
 
-1.  **Database Setup:**
-    This project requires a `users` table in a PostgreSQL database.
+This project requires a `users` table in a PostgreSQL database.
 
-    1.  **Create the Database & Table:**
-        Open `psql` or your preferred database client and run the following SQL commands:
+1.  **Create the Database & Table:**
+    Open `psql` or your preferred database client and run the following SQL commands:
 
-        ```sql
-        -- 1. Create a new database
-        CREATE DATABASE test_db;
+    ```sql
+    -- 1. Create a new database
+    CREATE DATABASE test_db;
 
-        -- 2. Create the users table
-        CREATE TABLE users (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(50) NOT NULL,
-            comment TEXT
-        );
+    -- 2. Create the users table
+    CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) NOT NULL,
+        comment TEXT
+    );
 
-        -- 3. Insert sample data (including a 'secret' user)
-        INSERT INTO users (username, comment) VALUES
-        ('admin', 'I am the site admin.'),
-        ('alice', 'First user.'),
-        ('bob', 'Second user.'),
-        ('secret_user', 'This is a secret comment that should not be public.');
-        ```
-
-    2.  **Update Connection String:**
-        Open the `index.ts` file and update the `postgres` connection object with your own database credentials.
-
-        ```typescript
-        // in index.ts
-        const sql = postgres({
-          host: 'localhost',
-          port: 5432,
-          database: 'test_db',
-          username: 'your_postgres_user',    // <-- UPDATE THIS
-          password: 'your_strong_password' // <-- UPDATE THIS
-        });
-        ```
-
-2.  **Run the Server:**
-    ```bash
-    bun run index.ts
+    -- 3. Insert sample data (including a 'secret' user)
+    INSERT INTO users (username, comment) VALUES
+    ('admin', 'I am the site admin.'),
+    ('alice', 'First user.'),
+    ('bob', 'Second user.'),
+    ('secret_user', 'This is a secret comment that should not be public.');
     ```
-    The server will start on **http://localhost:3000**.
 
-3.  **Open the Frontend:**
-    Open `sqli/index.html` in your web browser.
+2.  **Update Connection String:**
+    Open the `index.ts` file and update the `postgres` connection object with your own database credentials.
 
----
+    ```typescript
+    // in index.ts
+    const sql = postgres({
+      host: 'localhost',
+      port: 5432,
+      database: 'test_db',
+      username: 'your_postgres_user',    // <-- UPDATE THIS
+      password: 'your_strong_password' // <-- UPDATE THIS
+    });
+    ```
+
+-----
 
 ## 🐛 The Vulnerability
 

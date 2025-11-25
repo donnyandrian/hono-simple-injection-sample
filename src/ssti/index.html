@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Profile Page (SSTI Demo)</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				background-color: #f0f2f5;
+				padding: 20px;
+				color: #333;
+			}
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+				background: white;
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+			input {
+				padding: 10px;
+				width: 60%;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+			}
+			button {
+				padding: 10px 20px;
+				cursor: pointer;
+				border: none;
+				border-radius: 4px;
+				color: white;
+				font-weight: bold;
+				margin-left: 10px;
+			}
+			.btn-vuln {
+				background: #e74c3c;
+			}
+			.btn-safe {
+				background: #27ae60;
+			}
+			iframe {
+				width: 100%;
+				height: 200px;
+				border: 1px solid #ddd;
+				margin-top: 20px;
+				background: #fafafa;
+			}
+			.code-snippet {
+				background: #eee;
+				padding: 5px;
+				border-radius: 3px;
+				font-family: monospace;
+				color: #d35400;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Welcome Message Generator</h1>
+			<p>Enter your name to generate a personalized welcome badge.</p>
+
+			<input
+				type="text"
+				id="nameInput"
+				placeholder="Enter your name (e.g., Alice)"
+				value="Alice" />
+
+			<div style="margin-top: 15px">
+				<button class="btn-vuln" onclick="generate('render')">🔴 Generate (Unsafe)</button>
+				<button class="btn-safe" onclick="generate('render-safe')">
+					🟢 Generate (Safe)
+				</button>
+			</div>
+
+			<h3>Preview:</h3>
+			<iframe id="previewFrame" src="about:blank"></iframe>
+
+			<div style="margin-top: 20px; font-size: 0.9em; color: #666">
+				<strong>Hint:</strong> Try injecting EJS math like
+				<span class="code-snippet">&lt;%= 7*7 %&gt;</span>
+			</div>
+		</div>
+
+		<script>
+			function generate(endpoint) {
+				const name = document.getElementById("nameInput").value;
+				const iframe = document.getElementById("previewFrame");
+				// Load the result directly into the iframe to see the rendered HTML
+				iframe.src = `http://localhost:3002/${endpoint}?name=${encodeURIComponent(name)}`;
+			}
+		</script>
+	</body>
+</html>
