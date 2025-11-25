@@ -25,6 +25,11 @@ This repository is divided into modules based on the type of vulnerability:
 * **Target:** EJS Template Engine
 * **Goal:** Inject malicious code into server-side templates to execute logic or commands.
 
+### 4. [JSON Injection (Prototype Pollution)](./src/json-pollution/README.md)
+* **Location:** `./src/json-pollution`
+* **Target:** JavaScript Runtime (Object Prototype)
+* **Goal:** Corrupt the global Object prototype to alter application logic (e.g., gain Admin access).
+
 ## 🌍 Global Prerequisites
 
 Before running any module, ensure you have:
